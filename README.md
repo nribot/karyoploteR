@@ -87,14 +87,4 @@ Click on them to see how the code needed to create them.
 </p>
 
 
-
-
-
-
-
-
-
-
-
-
-A line I wrote on my local computer
+Afegeixo una línia des de RStudio.
