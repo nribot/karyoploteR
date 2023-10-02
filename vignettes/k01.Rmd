@@ -1,0 +1,94 @@
+---
+title: "Installing devel version and trying out KP"
+output: html_document
+date: "2023-10-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("karyoploteR")
+```
+```{r}
+library(karyoploteR)
+```
+
+
+```{r warning=FALSE}
+custom.genome <- toGRanges(data.frame(chr=c("A"), 
+                                      start=c(1), 
+                                      end=c(250)
+                                      ))
+
+custom.cytobands <- toGRanges("myBands.txt")
+
+kp <- plotKaryotype(genome = custom.genome, cytobands = custom.cytobands, chromosomes = "all")
+
+kpAddBaseNumbers(kp, tick.dist = 100, tick.len = 10, tick.col="red", cex=1,
+                 minor.tick.dist = 50, minor.tick.len = 5, minor.tick.col = "gray")
+```
+myMarkers = toGRanges(data.frame(chr = c("chr1", "chr1", "chr1", "chr1"),
+                                 start = c(22, 67, 137, 236),
+                                 end = c(22, 67, 137, 236),
+                                 labels = c("Site 1", "Site 2", "Site 3", "Site 4")
+                                 )
+                      )
+                      
+```{r}
+
+zoom.region <- toGRanges(data.frame("chr1", 0, 300))
+
+kp <- plotKaryotype(chromosomes="chr1",  zoom=zoom.region)
+
+
+# escala horitzontal
+kpAddBaseNumbers(kp, tick.dist = 100, tick.len = 10, tick.col="red", cex=1,
+                 minor.tick.dist = 50, minor.tick.len = 5, minor.tick.col = "gray")
+
+
+# partició espai
+# track 1
+at = autotrack(current.track = 1, total.tracks = 3)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+0.25, cex=5, col=rainbow(23))
+kpAddLabels(kp, labels = "Track 1", r0=at$r0+0.25, r1=at$r1)
+
+# track 2
+at = autotrack(current.track = 2, total.tracks = 3)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+0.25, cex=5, col=rainbow(23))
+kpAddLabels(kp, labels = "Track 2", r0=at$r0+0.25, r1=at$r1)
+
+# track3
+at = autotrack(current.track = 2, total.tracks = 3)
+# afegeix nom dels llocs
+markers <- data.frame(chr=rep("chr1", 4), 
+                      pos=c(22, 67, 137, 236), 
+                      labels=paste0("Site", 1:4))
+kpPlotMarkers(kp, chr=markers$chr, x=markers$pos, labels=markers$labels)
+
+```
+
+
+
+
+```{r}
+class((1:10*10e6))
+
+myMarkers = toGRanges(data.frame(chr = c("chr1", "chr1", "chr1", "chr1"),
+                                 start = c(22, 67, 137, 236),
+                                 end = c(22, 67, 137, 236),
+                                 labels = c("Site 1", "Site 2", "Site 3", "Site 4")
+                                 )
+                      )
+kpPlotMarkers(kp, myMarkers)
+```
+
