@@ -1,0 +1,132 @@
+---
+title: "Installing devel version and trying out KP"
+output: html_document
+date: "2023-10-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+```{r}
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("karyoploteR")
+```
+
+```{r}
+library(karyoploteR)
+```
+
+
+
+```{r}
+set.seed(29092023)
+dat <- data.frame(labels=c("N1", "T1", "N2", "T2"),
+                   p1=runif(4), 
+                   p2=runif(4), 
+                   p3=runif(4), 
+                   p4=runif(4)
+                   )
+```
+
+
+
+                      
+                      
+```{r}
+zoom.region <- toGRanges(data.frame("chr1", 0, 300))
+
+kp <- plotKaryotype(chromosomes="chr1",  zoom=zoom.region)
+
+
+# escala horitzontal
+kpAddBaseNumbers(kp, tick.dist = 100, tick.len = 10, tick.col="red", cex=1,
+                 minor.tick.dist = 50, minor.tick.len = 5, minor.tick.col = "gray")
+
+
+# partició espai
+# track 1
+at = autotrack(current.track = 1, total.tracks = 6)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+(at$r1-at$r0)/2, cex=3, col=gray(dat$p1))
+kpAddLabels(kp, labels = "Track 1", r0=at$r0, r1=at$r1)
+
+# track 2
+at = autotrack(current.track = 2, total.tracks = 6)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+(at$r1-at$r0)/2, cex=3, col=gray(dat$p2))
+kpAddLabels(kp, labels = "Track 2", r0=at$r0, r1=at$r1)
+
+# track 4
+at = autotrack(current.track = 3, total.tracks = 6)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+(at$r1-at$r0)/2, cex=3, col=gray(dat$p3))
+kpAddLabels(kp, labels = "Track 3", r0=at$r0, r1=at$r1)
+
+# track 4
+at = autotrack(current.track = 4, total.tracks = 6)
+kpPoints(kp, chr="chr1", x=c(22, 67, 137, 236), y=at$r0+(at$r1-at$r0)/2, cex=3, col=gray(dat$p4))
+kpAddLabels(kp, labels = "Track 4", r0=at$r0, r1=at$r1)
+
+#track 5
+at = autotrack(current.track = c(5,6), total.tracks = 6)
+
+# afegeix nom dels llocs
+markers <- data.frame(chr=rep("chr1", 4), 
+                      pos=c(22, 67, 137, 236), 
+                      labels=paste0("Site", 1:4))
+kpPlotMarkers(kp, chr=markers$chr, x=markers$pos, y=at$r0, labels=markers$labels)
+```
+
+
+```{r}
+zoom.region <- toGRanges(data.frame("chr1", 0, 300))
+
+kp <- plotKaryotype(plot.type = 2, chromosomes="chr1",  zoom=zoom.region)
+
+# escala horitzontal
+kpAddBaseNumbers(kp, tick.dist = 100, tick.len = 10, tick.col="red", cex=1,
+                 minor.tick.dist = 50, minor.tick.len = 5, minor.tick.col = "gray")
+
+
+total.tracks <- 4
+for(i in seq_len(total.tracks)) {
+  at <- autotrack(current.track = i, total.tracks = total.tracks)
+  kpPoints(kp, chr="chr1", 
+           x=c(22, 67, 137, 236), 
+           y=at$r0+(at$r1-at$r0)/2, 
+           cex=3, 
+           col=gray(dat[,1+i]))
+  kpAddLabels(kp, labels = paste0(dat$labels[i]), r0=at$r0, r1=at$r1)
+}
+
+markers <- data.frame(chr=rep("chr1", 4), 
+                      pos=c(22, 67, 137, 236), 
+                      labels=paste0("Site", 1:4))
+kpPlotMarkers(kp, chr=markers$chr, x=markers$pos, y=0.5, labels=markers$labels, data.panel = 2)
+
+# s'ha de girar el format de les dades
+# nom pos mostra1 mostra 2 ...
+
+# agrupar per individu
+
+# diferència t-n
+
+# afegir escala de color
+
+# es poden dibuixar el marge dels cercles?
+```
+
+
+
+
+
+
+
+
+
+
